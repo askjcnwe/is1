@@ -1,0 +1,44 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces">
+    <!--
+        Выбор человека для роли в фильме.
+        Параметры: personChoice (PersonChoice), legend (заголовок), personOptions, locationList (списки из БД).
+        Подключается внутри f:subview, поэтому идентификаторы компонентов не пересекаются.
+    -->
+    <fieldset class="relation">
+        <legend>#{legend}</legend>
+        <p:selectOneRadio id="personMode" value="#{personChoice.mode}" layout="lineDirection">
+            <f:selectItems value="#{personChoice.modes}" var="mode" itemValue="#{mode}" itemLabel="#{mode.label}"/>
+            <p:ajax process="@this" update="personBlock" ignoreAutoUpdate="true"/>
+        </p:selectOneRadio>
+        <h:panelGroup id="personBlock" layout="block" styleClass="relation-body">
+            <h:panelGroup layout="block" styleClass="field" rendered="#{personChoice.mode eq 'EXISTING'}">
+                <p:outputLabel for="existingPerson" value="Человек, который уже есть в системе"/>
+                <p:selectOneMenu id="existingPerson" value="#{personChoice.existingId}" required="true"
+                                 requiredMessage="Выберите человека" filter="true" filterMatchMode="contains">
+                    <f:selectItem itemLabel="— выберите —" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{personOptions}" var="item" itemValue="#{item.id}"
+                                   itemLabel="№#{item.id}: #{item.name} (паспорт #{item.passportID})"/>
+                </p:selectOneMenu>
+                <p:message for="existingPerson" display="text"/>
+            </h:panelGroup>
+            <h:panelGroup layout="block" rendered="#{personChoice.mode eq 'NEW'}">
+                <ui:include src="/WEB-INF/includes/person-fields.xhtml">
+                    <ui:param name="personValues" value="#{personChoice.person}"/>
+                </ui:include>
+                <f:subview id="location">
+                    <ui:include src="/WEB-INF/includes/location-choice.xhtml">
+                        <ui:param name="locationChoice" value="#{personChoice.location}"/>
+                        <ui:param name="locationOptions" value="#{locationList}"/>
+                    </ui:include>
+                </f:subview>
+            </h:panelGroup>
+            <h:panelGroup layout="block" styleClass="hint" rendered="#{personChoice.mode eq 'NONE'}">
+                Роль не будет указана (null).
+            </h:panelGroup>
+        </h:panelGroup>
+    </fieldset>
+</ui:composition>

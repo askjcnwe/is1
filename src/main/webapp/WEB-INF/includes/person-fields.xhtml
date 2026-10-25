@@ -1,0 +1,67 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces">
+    <!--
+        Поля человека. Параметр: personValues — несохраняемый экземпляр Person с данными формы,
+        поэтому поля проверяются ограничениями Bean Validation сущности Person.
+    -->
+    <div class="form-grid">
+        <div class="field">
+            <p:outputLabel for="personName" value="Имя (name)"/>
+            <p:inputText id="personName" value="#{personValues.name}" required="true"
+                         requiredMessage="Введите имя" maxlength="255"/>
+            <p:message for="personName" display="text"/>
+        </div>
+        <div class="field">
+            <p:outputLabel for="passportID" value="Номер паспорта (passportID)"/>
+            <p:inputText id="passportID" value="#{personValues.passportID}" required="true"
+                         requiredMessage="Введите номер паспорта" maxlength="46"
+                         placeholder="не длиннее 46 символов"/>
+            <p:message for="passportID" display="text"/>
+        </div>
+        <div class="field">
+            <p:outputLabel for="hairColor" value="Цвет волос (hairColor)"/>
+            <p:selectOneMenu id="hairColor" value="#{personValues.hairColor}" required="true"
+                             requiredMessage="Выберите цвет волос">
+                <f:selectItem itemLabel="— выберите —" itemValue="#{null}" noSelectionOption="true"/>
+                <f:selectItems value="#{enums.colors}"/>
+            </p:selectOneMenu>
+            <p:message for="hairColor" display="text"/>
+        </div>
+        <div class="field">
+            <p:outputLabel for="eyeColor" value="Цвет глаз (eyeColor)"/>
+            <p:selectOneMenu id="eyeColor" value="#{personValues.eyeColor}">
+                <f:selectItem itemLabel="— не задан —" itemValue="#{null}" noSelectionOption="true"/>
+                <f:selectItems value="#{enums.colors}"/>
+            </p:selectOneMenu>
+            <p:message for="eyeColor" display="text"/>
+        </div>
+        <div class="field">
+            <p:outputLabel for="height" value="Рост (height)"/>
+            <p:inputText id="height" value="#{personValues.height}" converter="positiveInteger"
+                         required="true" requiredMessage="Укажите рост"
+                         converterMessage="Рост — целое число от 1 до 2147483647"
+                         maxlength="10" placeholder="целое, больше 0"/>
+            <p:keyFilter for="height" mask="pint"/>
+            <p:message for="height" display="text"/>
+        </div>
+        <div class="field">
+            <p:outputLabel for="weight" value="Вес (weight)"/>
+            <p:inputText id="weight" value="#{personValues.weight}" converter="positiveInteger"
+                         required="true" requiredMessage="Укажите вес"
+                         converterMessage="Вес — целое число от 1 до 2147483647"
+                         maxlength="10" placeholder="целое, больше 0"/>
+            <p:keyFilter for="weight" mask="pint"/>
+            <p:message for="weight" display="text"/>
+        </div>
+        <div class="field">
+            <p:outputLabel for="birthday" value="Дата рождения (birthday)"/>
+            <p:datePicker id="birthday" value="#{personValues.birthday}" pattern="dd.MM.yyyy" showIcon="true"
+                          monthNavigator="true" yearNavigator="true" yearRange="1900:2030"
+                          converterMessage="Дата рождения — в формате ДД.ММ.ГГГГ" placeholder="может быть пустой"/>
+            <p:message for="birthday" display="text"/>
+        </div>
+    </div>
+</ui:composition>

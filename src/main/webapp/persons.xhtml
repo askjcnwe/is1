@@ -1,0 +1,102 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Люди</ui:define>
+
+    <ui:define name="content">
+        <div class="page-header">
+            <div>
+                <h1>Люди</h1>
+                <p>Режиссёры, сценаристы и операторы. Человека, указанного хотя бы в одном фильме, удалить нельзя.</p>
+            </div>
+        </div>
+
+        <h:form id="personsForm">
+            <p:remoteCommand name="refreshData" ignoreAutoUpdate="true" action="#{personsPage.reload}"
+                             process="@this" update="persons"/>
+
+            <p:dataTable id="persons" var="row" value="#{personsPage.rows}"
+                         paginator="true" rows="10" rowsPerPageTemplate="5,10,20,50" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}–{endRecord} из {totalRecords}"
+                         emptyMessage="Людей пока нет" stripedRows="true" size="small">
+                <f:facet name="header">
+                    <div class="table-header">
+                        <span>Всего: #{personsPage.rows.size()}</span>
+                        <p:commandButton value="Добавить человека" icon="pi pi-plus"
+                                         action="#{personsPage.prepareCreate}" process="@this"
+                                         update=":personDialogForm"
+                                         oncomplete="if (args &amp;&amp; args.ready) PF('personDialog').show()"/>
+                    </div>
+                </f:facet>
+                <p:column headerText="№" styleClass="col-id">#{row.person.id}</p:column>
+                <p:column headerText="Имя (name)">#{row.person.name}</p:column>
+                <p:column headerText="Паспорт (passportID)">#{row.person.passportID}</p:column>
+                <p:column headerText="Глаза (eyeColor)">
+                    <h:outputText value="#{row.person.eyeColor}" rendered="#{not empty row.person.eyeColor}"/>
+                    <h:outputText value="null" styleClass="empty-value" rendered="#{empty row.person.eyeColor}"/>
+                </p:column>
+                <p:column headerText="Волосы (hairColor)">#{row.person.hairColor}</p:column>
+                <p:column headerText="Рост (height)" styleClass="col-number">#{row.person.height}</p:column>
+                <p:column headerText="Вес (weight)" styleClass="col-number">#{row.person.weight}</p:column>
+                <p:column headerText="Дата рождения (birthday)">
+                    <h:outputText value="#{row.person.birthday}" rendered="#{not empty row.person.birthday}">
+                        <f:convertDateTime type="localDate" pattern="dd.MM.yyyy"/>
+                    </h:outputText>
+                    <h:outputText value="null" styleClass="empty-value" rendered="#{empty row.person.birthday}"/>
+                </p:column>
+                <p:column headerText="Место (location)">
+                    <h:outputText value="№#{row.person.location.id}: #{row.person.location}"
+                                  rendered="#{not empty row.person.location}"/>
+                    <h:outputText value="null" styleClass="empty-value" rendered="#{empty row.person.location}"/>
+                </p:column>
+                <p:column headerText="Фильмов" styleClass="col-number">#{row.movies}</p:column>
+                <p:column headerText="Действия" styleClass="col-actions">
+                    <div class="table-actions">
+                        <p:commandButton icon="pi pi-pencil" title="Изменить" styleClass="rounded-button ui-button-flat"
+                                         action="#{personsPage.prepareEdit(row.person.id)}" process="@this"
+                                         update=":personDialogForm"
+                                         oncomplete="if (args &amp;&amp; args.ready) PF('personDialog').show()"/>
+                        <p:commandButton icon="pi pi-trash" title="Удалить"
+                                         styleClass="rounded-button ui-button-flat ui-button-danger"
+                                         action="#{personsPage.delete(row.person.id)}" process="@this"
+                                         update="persons">
+                            <p:confirm header="Удаление человека" icon="pi pi-exclamation-triangle"
+                                       message="Удалить «#{row.person.name}» (№#{row.person.id})? Если он указан в фильмах, удаление будет отменено."/>
+                        </p:commandButton>
+                    </div>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog fitViewport="true" id="personDialog" widgetVar="personDialog" header="Человек" modal="true"
+                  resizable="false" responsive="true" width="720" closeOnEscape="true">
+            <h:form id="personDialogForm">
+                <h2 class="dialog-title">#{personsPage.dialogTitle}</h2>
+                <p:messages for="personDialogForm" closable="true" styleClass="dialog-messages"/>
+                <ui:include src="/WEB-INF/includes/person-fields.xhtml">
+                    <ui:param name="personValues" value="#{personsPage.values}"/>
+                </ui:include>
+                <f:subview id="location">
+                    <ui:include src="/WEB-INF/includes/location-choice.xhtml">
+                        <ui:param name="locationChoice" value="#{personsPage.location}"/>
+                        <ui:param name="locationOptions" value="#{personsPage.locationOptions}"/>
+                    </ui:include>
+                </f:subview>
+                <div class="dialog-actions">
+                    <p:commandButton value="Отмена" type="button" icon="pi pi-times"
+                                     styleClass="ui-button-secondary ui-button-outlined"
+                                     onclick="PF('personDialog').hide()"/>
+                    <p:commandButton id="save" value="Сохранить" icon="pi pi-check"
+                                     action="#{personsPage.save}" process="@form" update="@form :personsForm"
+                                     oncomplete="if (args &amp;&amp; args.saved) PF('personDialog').hide()"/>
+                </div>
+                <p:defaultCommand target="save"/>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="primefaces"
+      lang="ru">
+<!-- Шаблон страниц входа и регистрации (без меню приложения) -->
+<f:view locale="ru" contentType="text/html" encoding="UTF-8">
+    <h:head>
+        <f:facet name="first">
+            <meta charset="UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        </f:facet>
+        <title><ui:insert name="title"/> · ИС «Фильмы»</title>
+        <h:outputStylesheet name="css/app.css"/>
+    </h:head>
+    <h:body styleClass="app auth-page">
+        <div class="login-container">
+            <div class="login-card">
+                <div class="header">
+                    <h1>ИС «Фильмы»</h1>
+                    <p>Информационная система управления фильмами</p>
+                </div>
+                <div class="form-container">
+                    <h2><ui:insert name="heading"/></h2>
+                    <p:messages id="messages" globalOnly="true" showDetail="false" closable="true"/>
+                    <ui:insert name="content"/>
+                </div>
+            </div>
+        </div>
+    </h:body>
+</f:view>
+</html>

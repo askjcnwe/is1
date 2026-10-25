@@ -1,0 +1,31 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="/WEB-INF/templates/auth.xhtml">
+
+    <ui:define name="title">Вход</ui:define>
+    <ui:define name="heading">Вход в систему</ui:define>
+
+    <ui:define name="content">
+        <h:form id="loginForm">
+            <p:defaultCommand target="submit"/>
+            <div class="form-group">
+                <p:outputLabel for="username" value="Имя пользователя"/>
+                <p:inputText id="username" value="#{auth.username}" maxlength="50"
+                             required="true" requiredMessage="Введите имя пользователя"/>
+                <p:message for="username" display="text"/>
+            </div>
+            <div class="form-group">
+                <p:outputLabel for="password" value="Пароль"/>
+                <p:password id="password" value="#{auth.password}" maxlength="100"
+                            required="true" requiredMessage="Введите пароль"/>
+                <p:message for="password" display="text"/>
+            </div>
+            <p:commandButton id="submit" value="Войти" icon="pi pi-sign-in"
+                             action="#{auth.login}" ajax="false" styleClass="btn-primary"/>
+        </h:form>
+        <h:link outcome="/register" value="Нет аккаунта? Зарегистрироваться" styleClass="btn-link"/>
+    </ui:define>
+</ui:composition>

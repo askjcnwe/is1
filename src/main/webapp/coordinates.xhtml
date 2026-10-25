@@ -1,0 +1,97 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Координаты</ui:define>
+
+    <ui:define name="content">
+        <div class="page-header">
+            <div>
+                <h1>Координаты</h1>
+                <p>Координаты, которые есть в системе, и число фильмов, которые на них ссылаются.
+                    Координаты, используемые фильмами, удалить нельзя.</p>
+            </div>
+        </div>
+
+        <h:form id="coordinatesForm">
+            <p:remoteCommand name="refreshData" ignoreAutoUpdate="true" action="#{coordinatesPage.reload}"
+                             process="@this" update="coordinates"/>
+
+            <p:dataTable id="coordinates" var="row" value="#{coordinatesPage.rows}"
+                         paginator="true" rows="10" rowsPerPageTemplate="5,10,20,50" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}–{endRecord} из {totalRecords}"
+                         emptyMessage="Координат пока нет" stripedRows="true" size="small">
+                <f:facet name="header">
+                    <div class="table-header">
+                        <span>Всего: #{coordinatesPage.rows.size()}</span>
+                        <p:commandButton value="Создать координаты" icon="pi pi-plus"
+                                         action="#{coordinatesPage.prepareCreate}" process="@this"
+                                         update=":coordinatesDialogForm"
+                                         oncomplete="PF('coordinatesDialog').show()"/>
+                    </div>
+                </f:facet>
+                <p:column headerText="№" styleClass="col-id">#{row.coordinates.id}</p:column>
+                <p:column headerText="X" styleClass="col-number">
+                    <h:outputText value="#{row.coordinates.x}" converter="decimal"/>
+                </p:column>
+                <p:column headerText="Y" styleClass="col-number">#{row.coordinates.y}</p:column>
+                <p:column headerText="Используется фильмами" styleClass="col-number">#{row.movies}</p:column>
+                <p:column headerText="Действия" styleClass="col-actions">
+                    <div class="table-actions">
+                        <p:commandButton icon="pi pi-pencil" title="Изменить" styleClass="rounded-button ui-button-flat"
+                                         action="#{coordinatesPage.prepareEdit(row.coordinates.id)}" process="@this"
+                                         update=":coordinatesDialogForm"
+                                         oncomplete="if (args &amp;&amp; args.ready) PF('coordinatesDialog').show()"/>
+                        <p:commandButton icon="pi pi-trash" title="Удалить"
+                                         styleClass="rounded-button ui-button-flat ui-button-danger"
+                                         action="#{coordinatesPage.delete(row.coordinates.id)}" process="@this"
+                                         update="coordinates">
+                            <p:confirm header="Удаление координат" icon="pi pi-exclamation-triangle"
+                                       message="Удалить координаты №#{row.coordinates.id}? Если их используют фильмы, удаление будет отменено."/>
+                        </p:commandButton>
+                    </div>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog fitViewport="true" id="coordinatesDialog" widgetVar="coordinatesDialog" header="Координаты" modal="true"
+                  resizable="false" responsive="true" width="520" closeOnEscape="true">
+            <h:form id="coordinatesDialogForm">
+                <h2 class="dialog-title">#{coordinatesPage.dialogTitle}</h2>
+                <p:messages for="coordinatesDialogForm" closable="true" styleClass="dialog-messages"/>
+                <div class="form-grid">
+                    <div class="field">
+                        <p:outputLabel for="x" value="X (число)"/>
+                        <p:inputText id="x" value="#{coordinatesPage.x}" converter="decimal" required="true"
+                                     requiredMessage="Укажите координату X" converterMessage="X — число, например -12.5"
+                                     maxlength="25"/>
+                        <p:keyFilter for="x" regEx="/[\d.,\-]/"/>
+                        <p:message for="x" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="y" value="Y (целое число)"/>
+                        <p:inputText id="y" value="#{coordinatesPage.y}" required="true"
+                                     requiredMessage="Укажите координату Y"
+                                     converterMessage="Y — целое число от -2147483648 до 2147483647"
+                                     maxlength="11"/>
+                        <p:keyFilter for="y" mask="int"/>
+                        <p:message for="y" display="text"/>
+                    </div>
+                </div>
+                <div class="dialog-actions">
+                    <p:commandButton value="Отмена" type="button" icon="pi pi-times"
+                                     styleClass="ui-button-secondary ui-button-outlined"
+                                     onclick="PF('coordinatesDialog').hide()"/>
+                    <p:commandButton id="save" value="Сохранить" icon="pi pi-check"
+                                     action="#{coordinatesPage.save}" process="@form" update="@form :coordinatesForm"
+                                     oncomplete="if (args &amp;&amp; args.saved) PF('coordinatesDialog').hide()"/>
+                </div>
+                <p:defaultCommand target="save"/>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

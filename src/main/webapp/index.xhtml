@@ -1,0 +1,150 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Фильмы</ui:define>
+
+    <ui:define name="content">
+        <div class="page-header">
+            <div>
+                <h1>Фильмы</h1>
+                <p>Фильтры по строковым колонкам ищут только полное совпадение значения; сортировка — щелчком по заголовку колонки.</p>
+            </div>
+        </div>
+
+        <h:form id="moviesForm">
+            <p:remoteCommand name="refreshData" ignoreAutoUpdate="true" process="@this" update="movies"/>
+
+            <p:dataTable id="movies" widgetVar="moviesTable" var="m"
+                         value="#{movieTable.model}" lazy="true"
+                         paginator="true" rows="10" rowsPerPageTemplate="5,10,20,50"
+                         paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}–{endRecord} из {totalRecords}"
+                         sortMode="single" allowUnsorting="true" filterDelay="500"
+                         emptyMessage="Фильмов не найдено" styleClass="movies-table"
+                         stripedRows="true" size="small">
+
+                <f:facet name="header">
+                    <div class="table-header">
+                        <span>Всего фильмов по текущему фильтру: #{movieTable.model.rowCount}</span>
+                        <p:commandButton value="Создать фильм" icon="pi pi-plus"
+                                         action="#{movieForm.prepareCreate}" process="@this"
+                                         update=":movieFormDialogForm"
+                                         oncomplete="if (args &amp;&amp; args.ready) PF('movieFormDialog').show()"/>
+                    </div>
+                </f:facet>
+
+                <p:column field="id" filterable="false" styleClass="col-id">
+                    <f:facet name="header"><span class="col-title">ID</span><span class="col-attr">id</span></f:facet>
+                    <h:link outcome="/movie" value="#{m.id}" title="Открыть фильм">
+                        <f:param name="id" value="#{m.id}"/>
+                    </h:link>
+                </p:column>
+                <p:column field="name" filterMatchMode="exact">
+                    <f:facet name="header"><span class="col-title">Название</span><span class="col-attr">name</span></f:facet>
+                    <h:outputText value="#{m.name}"/>
+                </p:column>
+                <p:column field="coordinates.x" filterable="false" styleClass="col-number">
+                    <f:facet name="header"><span class="col-title">X</span><span class="col-attr">coordinates.x</span></f:facet>
+                    <h:outputText value="#{m.coordinates.x}" converter="decimal"/>
+                </p:column>
+                <p:column field="coordinates.y" filterable="false" styleClass="col-number">
+                    <f:facet name="header"><span class="col-title">Y</span><span class="col-attr">coordinates.y</span></f:facet>
+                    <h:outputText value="#{m.coordinates.y}"/>
+                </p:column>
+                <p:column field="creationDate" filterable="false">
+                    <f:facet name="header"><span class="col-title">Создан</span><span class="col-attr">creationDate</span></f:facet>
+                    <h:outputText value="#{m.creationDate}">
+                        <f:convertDateTime type="localDate" pattern="dd.MM.yyyy"/>
+                    </h:outputText>
+                </p:column>
+                <p:column field="oscarsCount" filterable="false" styleClass="col-number">
+                    <f:facet name="header"><span class="col-title">«Оскары»</span><span class="col-attr">oscarsCount</span></f:facet>
+                    <h:outputText value="#{m.oscarsCount}"/>
+                </p:column>
+                <p:column field="budget" filterable="false" styleClass="col-number">
+                    <f:facet name="header"><span class="col-title">Бюджет</span><span class="col-attr">budget</span></f:facet>
+                    <h:outputText value="#{m.budget}"/>
+                </p:column>
+                <p:column field="totalBoxOffice" filterable="false" styleClass="col-number">
+                    <f:facet name="header"><span class="col-title">Сборы</span><span class="col-attr">totalBoxOffice</span></f:facet>
+                    <h:outputText value="#{m.totalBoxOffice}"/>
+                </p:column>
+                <p:column field="mpaaRating" filterMatchMode="exact">
+                    <f:facet name="header"><span class="col-title">MPAA</span><span class="col-attr">mpaaRating</span></f:facet>
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('moviesTable').filter()" styleClass="ui-custom-filter">
+                            <f:selectItem itemLabel="все" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{enums.mpaaRatings}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{m.mpaaRating}"/>
+                </p:column>
+                <p:column field="director.name" filterMatchMode="exact">
+                    <f:facet name="header"><span class="col-title">Режиссёр</span><span class="col-attr">director</span></f:facet>
+                    <h:outputText value="#{m.director.name}" rendered="#{not empty m.director}"/>
+                    <h:outputText value="null" styleClass="empty-value" rendered="#{empty m.director}"/>
+                </p:column>
+                <p:column field="screenwriter.name" filterMatchMode="exact">
+                    <f:facet name="header"><span class="col-title">Сценарист</span><span class="col-attr">screenwriter</span></f:facet>
+                    <h:outputText value="#{m.screenwriter.name}" rendered="#{not empty m.screenwriter}"/>
+                    <h:outputText value="null" styleClass="empty-value" rendered="#{empty m.screenwriter}"/>
+                </p:column>
+                <p:column field="operator.name" filterMatchMode="exact">
+                    <f:facet name="header"><span class="col-title">Оператор</span><span class="col-attr">operator</span></f:facet>
+                    <h:outputText value="#{m.operator.name}"/>
+                </p:column>
+                <p:column field="length" filterable="false" styleClass="col-number">
+                    <f:facet name="header"><span class="col-title">Длит.</span><span class="col-attr">length</span></f:facet>
+                    <h:outputText value="#{m.length}"/>
+                </p:column>
+                <p:column field="goldenPalmCount" filterable="false" styleClass="col-number">
+                    <f:facet name="header"><span class="col-title">Пальм. ветви</span><span class="col-attr">goldenPalmCount</span></f:facet>
+                    <h:outputText value="#{m.goldenPalmCount}"/>
+                </p:column>
+                <p:column field="usaBoxOffice" filterable="false" styleClass="col-number">
+                    <f:facet name="header"><span class="col-title">Сборы США</span><span class="col-attr">usaBoxOffice</span></f:facet>
+                    <h:outputText value="#{m.usaBoxOffice}" converter="positiveFloat"/>
+                </p:column>
+                <p:column field="tagline" filterMatchMode="exact">
+                    <f:facet name="header"><span class="col-title">Слоган</span><span class="col-attr">tagline</span></f:facet>
+                    <h:outputText value="#{m.tagline}" rendered="#{not empty m.tagline}"/>
+                    <h:outputText value="null" styleClass="empty-value" rendered="#{empty m.tagline}"/>
+                </p:column>
+                <p:column field="genre" filterMatchMode="exact">
+                    <f:facet name="header"><span class="col-title">Жанр</span><span class="col-attr">genre</span></f:facet>
+                    <f:facet name="filter">
+                        <p:selectOneMenu onchange="PF('moviesTable').filter()" styleClass="ui-custom-filter">
+                            <f:selectItem itemLabel="все" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{enums.genres}"/>
+                        </p:selectOneMenu>
+                    </f:facet>
+                    <h:outputText value="#{m.genre}" rendered="#{not empty m.genre}"/>
+                    <h:outputText value="null" styleClass="empty-value" rendered="#{empty m.genre}"/>
+                </p:column>
+                <p:column headerText="Действия" exportable="false" styleClass="col-actions">
+                    <div class="table-actions">
+                        <p:button icon="pi pi-eye" outcome="/movie" title="Подробнее"
+                                  styleClass="rounded-button ui-button-flat">
+                            <f:param name="id" value="#{m.id}"/>
+                        </p:button>
+                        <p:commandButton icon="pi pi-pencil" title="Изменить"
+                                         styleClass="rounded-button ui-button-flat"
+                                         action="#{movieForm.prepareEdit(m.id)}" process="@this"
+                                         update=":movieFormDialogForm"
+                                         oncomplete="if (args &amp;&amp; args.ready) PF('movieFormDialog').show()"/>
+                        <p:commandButton icon="pi pi-trash" title="Удалить"
+                                         styleClass="rounded-button ui-button-flat ui-button-danger"
+                                         action="#{movieDelete.prepare(m.id)}" process="@this"
+                                         update=":movieDeleteDialogForm"
+                                         oncomplete="if (args &amp;&amp; args.ready) PF('movieDeleteDialog').show()"/>
+                    </div>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+    </ui:define>
+</ui:composition>

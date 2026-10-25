@@ -1,0 +1,42 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+    <!-- Карточка человека на странице фильма. Параметры: person (Person или null), role (заголовок), relatedMovies (список). -->
+    <div class="card related">
+        <h:panelGroup rendered="#{not empty person}">
+            <h3><i class="pi pi-user"/> #{role}: №#{person.id}</h3>
+            <dl class="props">
+                <dt>name</dt>
+                <dd>#{person.name}</dd>
+                <dt>passportID</dt>
+                <dd>#{person.passportID}</dd>
+                <dt>eyeColor</dt>
+                <dd>#{empty person.eyeColor ? 'null' : person.eyeColor}</dd>
+                <dt>hairColor</dt>
+                <dd>#{person.hairColor}</dd>
+                <dt>height</dt>
+                <dd>#{person.height}</dd>
+                <dt>weight</dt>
+                <dd>#{person.weight}</dd>
+                <dt>birthday</dt>
+                <dd>
+                    <h:outputText value="#{person.birthday}" rendered="#{not empty person.birthday}">
+                        <f:convertDateTime type="localDate" pattern="dd.MM.yyyy"/>
+                    </h:outputText>
+                    <h:outputText value="null" rendered="#{empty person.birthday}"/>
+                </dd>
+                <dt>location</dt>
+                <dd>#{empty person.location ? 'null' : ''}<h:outputText rendered="#{not empty person.location}"
+                        value="№#{person.location.id}: #{person.location}"/></dd>
+            </dl>
+            <ui:include src="/WEB-INF/includes/movie-list.xhtml">
+                <ui:param name="movies" value="#{relatedMovies}"/>
+            </ui:include>
+        </h:panelGroup>
+        <h:panelGroup rendered="#{empty person}">
+            <h3><i class="pi pi-user"/> #{role}</h3>
+            <p class="hint">Не указан (null).</p>
+        </h:panelGroup>
+    </div>
+</ui:composition>

@@ -1,0 +1,100 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Места</ui:define>
+
+    <ui:define name="content">
+        <div class="page-header">
+            <div>
+                <h1>Места</h1>
+                <p>Местоположения людей. Место, указанное хотя бы у одного человека, удалить нельзя.</p>
+            </div>
+        </div>
+
+        <h:form id="locationsForm">
+            <p:remoteCommand name="refreshData" ignoreAutoUpdate="true" action="#{locationsPage.reload}"
+                             process="@this" update="locations"/>
+
+            <p:dataTable id="locations" var="row" value="#{locationsPage.rows}"
+                         paginator="true" rows="10" rowsPerPageTemplate="5,10,20,50" paginatorPosition="bottom"
+                         paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                         currentPageReportTemplate="{startRecord}–{endRecord} из {totalRecords}"
+                         emptyMessage="Мест пока нет" stripedRows="true" size="small">
+                <f:facet name="header">
+                    <div class="table-header">
+                        <span>Всего: #{locationsPage.rows.size()}</span>
+                        <p:commandButton value="Создать место" icon="pi pi-plus"
+                                         action="#{locationsPage.prepareCreate}" process="@this"
+                                         update=":locationDialogForm"
+                                         oncomplete="PF('locationDialog').show()"/>
+                    </div>
+                </f:facet>
+                <p:column headerText="№" styleClass="col-id">#{row.location.id}</p:column>
+                <p:column headerText="X" styleClass="col-number">#{row.location.x}</p:column>
+                <p:column headerText="Y" styleClass="col-number">#{row.location.y}</p:column>
+                <p:column headerText="Название (name)">
+                    <h:outputText value="#{row.location.name}" rendered="#{not empty row.location.name}"/>
+                    <h:outputText value="null" styleClass="empty-value" rendered="#{empty row.location.name}"/>
+                </p:column>
+                <p:column headerText="Указано у людей" styleClass="col-number">#{row.persons}</p:column>
+                <p:column headerText="Действия" styleClass="col-actions">
+                    <div class="table-actions">
+                        <p:commandButton icon="pi pi-pencil" title="Изменить" styleClass="rounded-button ui-button-flat"
+                                         action="#{locationsPage.prepareEdit(row.location.id)}" process="@this"
+                                         update=":locationDialogForm"
+                                         oncomplete="if (args &amp;&amp; args.ready) PF('locationDialog').show()"/>
+                        <p:commandButton icon="pi pi-trash" title="Удалить"
+                                         styleClass="rounded-button ui-button-flat ui-button-danger"
+                                         action="#{locationsPage.delete(row.location.id)}" process="@this"
+                                         update="locations">
+                            <p:confirm header="Удаление места" icon="pi pi-exclamation-triangle"
+                                       message="Удалить место №#{row.location.id}? Если оно указано у людей, удаление будет отменено."/>
+                        </p:commandButton>
+                    </div>
+                </p:column>
+            </p:dataTable>
+        </h:form>
+
+        <p:dialog fitViewport="true" id="locationDialog" widgetVar="locationDialog" header="Место" modal="true"
+                  resizable="false" responsive="true" width="560" closeOnEscape="true">
+            <h:form id="locationDialogForm">
+                <h2 class="dialog-title">#{locationsPage.dialogTitle}</h2>
+                <p:messages for="locationDialogForm" closable="true" styleClass="dialog-messages"/>
+                <div class="form-grid three">
+                    <div class="field">
+                        <p:outputLabel for="x" value="X (целое)"/>
+                        <p:inputText id="x" value="#{locationsPage.x}" required="true" requiredMessage="Укажите X"
+                                     converterMessage="X — целое число от -2147483648 до 2147483647" maxlength="11"/>
+                        <p:keyFilter for="x" mask="int"/>
+                        <p:message for="x" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="y" value="Y (целое)"/>
+                        <p:inputText id="y" value="#{locationsPage.y}" required="true" requiredMessage="Укажите Y"
+                                     converterMessage="Y — целое число от -2147483648 до 2147483647" maxlength="11"/>
+                        <p:keyFilter for="y" mask="int"/>
+                        <p:message for="y" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="name" value="Название (name)"/>
+                        <p:inputText id="name" value="#{locationsPage.name}" maxlength="255" placeholder="может быть пустым"/>
+                        <p:message for="name" display="text"/>
+                    </div>
+                </div>
+                <div class="dialog-actions">
+                    <p:commandButton value="Отмена" type="button" icon="pi pi-times"
+                                     styleClass="ui-button-secondary ui-button-outlined"
+                                     onclick="PF('locationDialog').hide()"/>
+                    <p:commandButton id="save" value="Сохранить" icon="pi pi-check"
+                                     action="#{locationsPage.save}" process="@form" update="@form :locationsForm"
+                                     oncomplete="if (args &amp;&amp; args.saved) PF('locationDialog').hide()"/>
+                </div>
+                <p:defaultCommand target="save"/>
+            </h:form>
+        </p:dialog>
+    </ui:define>
+</ui:composition>

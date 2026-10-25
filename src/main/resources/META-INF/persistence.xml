@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd"
+             version="3.0">
+
+    <persistence-unit name="moviesPU" transaction-type="JTA">
+        <provider>org.hibernate.jpa.HibernatePersistenceProvider</provider>
+        <!-- Источник данных настраивается в WildFly (deploy/datasource.cli) -->
+        <jta-data-source>java:jboss/datasources/MoviesDS</jta-data-source>
+
+        <class>ru.itmo.is.lab1.model.Movie</class>
+        <class>ru.itmo.is.lab1.model.Coordinates</class>
+        <class>ru.itmo.is.lab1.model.Person</class>
+        <class>ru.itmo.is.lab1.model.Location</class>
+        <class>ru.itmo.is.lab1.model.AppUser</class>
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <!-- Ограничения Bean Validation проверяются Hibernate перед каждой записью в БД -->
+        <validation-mode>CALLBACK</validation-mode>
+
+        <properties>
+            <!-- Схему и функции создаёт sql/init.sql; Hibernate только сверяет отображение с таблицами -->
+            <property name="hibernate.hbm2ddl.auto" value="validate"/>
+            <property name="hibernate.default_batch_fetch_size" value="50"/>
+            <property name="hibernate.show_sql" value="false"/>
+            <property name="hibernate.format_sql" value="true"/>
+        </properties>
+    </persistence-unit>
+</persistence>

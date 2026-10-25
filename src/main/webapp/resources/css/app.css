@@ -1,0 +1,713 @@
+:root {
+    --app-gradient: linear-gradient(135deg, #535846 0%, #49a52d 100%);
+    --app-bg: #f4f7f2;
+    --app-surface: #ffffff;
+    --app-border: #dfe5da;
+    --app-text: #2b2f26;
+    --app-muted: #6b7366;
+    --app-accent: #49a52d;
+    --app-accent-dark: #3c8a24;
+    --app-accent-soft: #e8f4e3;
+    --app-warning: #b45309;
+    --app-radius: 8px;
+}
+
+body.app {
+    margin: 0;
+    min-height: 100vh;
+    background: var(--app-gradient) fixed;
+    color: var(--app-text);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    line-height: 1.45;
+}
+
+.dialog-messages .ui-messages > div {
+    margin: 0.5rem 0;
+}
+
+/* Шапка и меню */
+.main-container {
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.main-card {
+    max-width: 1500px;
+    margin: 0 auto;
+    background: var(--app-surface);
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.app-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 0.5rem 1.5rem;
+    background: var(--app-gradient);
+    color: #ffffff;
+    border-radius: 12px 12px 0 0;
+}
+
+.app-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #ffffff;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.app-brand .pi {
+    color: #ffffff;
+}
+
+.app-menu {
+    flex: 1;
+    min-width: 0;
+}
+
+.app-menu .ui-menubar {
+    border: none;
+    background: transparent;
+    padding: 0;
+}
+
+.app-content {
+    padding: 1.5rem 1.75rem 2rem;
+}
+
+/* Заголовок страницы */
+.page-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: flex-end;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+}
+
+.page-header p {
+    margin: 0.25rem 0 0;
+    color: var(--app-muted);
+}
+
+.section-title {
+    margin: 1.5rem 0 0.75rem;
+    font-size: 1.15rem;
+}
+
+/* Карточки */
+.card {
+    background: var(--app-surface);
+    border: 1px solid var(--app-border);
+    border-radius: var(--app-radius);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+}
+
+.card h3 {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.card-header h2 {
+    margin: 0;
+    font-size: 1.3rem;
+}
+
+.card-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.notice {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--app-warning);
+}
+
+/* Таблицы */
+.table-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+}
+
+.ui-datatable .ui-datatable-tablewrapper {
+    overflow-x: auto;
+}
+
+.movies-table th {
+    white-space: normal;
+    vertical-align: top;
+}
+
+.movies-table th .ui-column-title {
+    display: inline-block;
+}
+
+.col-title {
+    display: block;
+}
+
+.col-attr {
+    display: block;
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 0.75rem;
+    font-weight: 400;
+    color: var(--app-muted);
+    overflow-wrap: anywhere;
+}
+
+.ui-datatable .ui-column-filter {
+    width: 100%;
+    min-width: 6rem;
+}
+
+.col-id {
+    width: 5rem;
+}
+
+.col-number {
+    text-align: right;
+}
+
+.col-actions {
+    width: 9rem;
+}
+
+.table-actions {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.empty-value {
+    color: var(--app-muted);
+    font-style: italic;
+}
+
+.results-table {
+    margin-top: 1rem;
+}
+
+/* Формы */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem 1rem;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    margin-bottom: 0.25rem;
+}
+
+.field.span-2 {
+    grid-column: span 2;
+}
+
+.form-grid.three {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.field .ui-inputfield,
+.field .ui-selectonemenu {
+    width: 100%;
+}
+
+.field .ui-message {
+    margin: 0;
+}
+
+.inline-form {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.inline-form .ui-message {
+    flex-basis: 100%;
+    margin: 0;
+}
+
+fieldset.relation {
+    border: 1px solid var(--app-border);
+    border-radius: 6px;
+    padding: 0.5rem 1rem 1rem;
+    margin: 1rem 0 0;
+}
+
+fieldset.relation legend {
+    padding: 0 0.35rem;
+    font-weight: 600;
+}
+
+fieldset.relation.nested {
+    border-style: dashed;
+    margin-top: 0.75rem;
+}
+
+fieldset.relation.nested legend {
+    font-weight: 500;
+    color: var(--app-muted);
+}
+
+.relation-body {
+    margin-top: 0.75rem;
+}
+
+.hint {
+    color: var(--app-muted);
+    font-size: 0.875rem;
+    margin: 0.25rem 0 0.5rem;
+}
+
+.warning-hint {
+    color: var(--app-warning);
+}
+
+.dialog-title {
+    margin: 0 0 0.25rem;
+    font-size: 1.2rem;
+}
+
+.dialog-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.25rem;
+}
+
+/* Просмотр фильма */
+.props {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.45rem 1.5rem;
+    margin: 0;
+}
+
+.props dt {
+    color: var(--app-muted);
+    font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
+    font-size: 0.875rem;
+}
+
+.props dd {
+    margin: 0;
+    font-weight: 500;
+    overflow-wrap: anywhere;
+}
+
+.props.two-columns {
+    grid-template-columns: max-content 1fr max-content 1fr;
+}
+
+/* 17 колонок: таблица шире экрана и прокручивается по горизонтали, ячейки не обрезаются */
+.movies-table .ui-datatable-tablewrapper > table {
+    table-layout: auto;
+    width: max-content;
+    min-width: 100%;
+}
+
+.movies-table th,
+.movies-table td {
+    white-space: nowrap;
+}
+
+.movies-table td:nth-child(16) {
+    white-space: normal;
+    min-width: 12rem;
+    max-width: 18rem;
+}
+
+.movies-table .col-attr {
+    overflow-wrap: normal;
+}
+
+.ui-custom-filter {
+    width: 100%;
+    min-width: 5.5rem;
+}
+
+.related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1rem;
+}
+
+.related .props {
+    margin-bottom: 0.75rem;
+}
+
+.link-list {
+    margin: 0.25rem 0 0.5rem;
+    padding-left: 1.25rem;
+}
+
+.link-list li {
+    margin: 0.15rem 0;
+}
+
+.muted {
+    color: var(--app-muted);
+    font-weight: 400;
+    font-size: 0.95rem;
+}
+
+/* Специальные операции */
+.ops-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+    align-items: start;
+}
+
+.ops-grid .card {
+    margin-bottom: 0;
+}
+
+.op.wide {
+    grid-column: 1 / -1;
+}
+
+.op .field {
+    margin-bottom: 0.75rem;
+}
+
+.result {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: var(--app-accent-soft);
+    border-left: 3px solid var(--app-accent);
+    border-radius: 4px;
+}
+
+code {
+    font-size: 0.85em;
+    background: #eef2ea;
+    padding: 0.05rem 0.3rem;
+    border-radius: 4px;
+}
+
+@media (max-width: 760px) {
+    .app-header {
+        flex-wrap: wrap;
+        padding: 0.5rem 1rem;
+    }
+
+    .main-container {
+        padding: 10px;
+    }
+
+    .app-content {
+        padding: 1rem;
+    }
+
+    .app-user {
+        margin-left: 0;
+    }
+
+    .form-grid,
+    .form-grid.three,
+    .props.two-columns {
+        grid-template-columns: 1fr;
+    }
+
+    .field.span-2 {
+        grid-column: auto;
+    }
+
+    .ops-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ------------------------------------------------------------------ */
+/* Пользователь и выход                                                */
+/* ------------------------------------------------------------------ */
+.app-user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-left: auto;
+    white-space: nowrap;
+}
+
+.app-user-name {
+    font-weight: 600;
+}
+
+.ui-button.btn-logout {
+    background: rgba(255, 255, 255, 0.2);
+    border: 2px solid #ffffff;
+    border-radius: 6px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.ui-button.btn-logout:enabled:hover {
+    background: #ffffff;
+    border-color: #ffffff;
+    color: #535846 !important;
+}
+
+.ui-button.btn-logout:enabled:hover .ui-icon,
+.ui-button.btn-logout:enabled:hover .ui-button-text {
+    color: #535846 !important;
+}
+
+/* ------------------------------------------------------------------ */
+/* Меню в шапке                                                        */
+/* ------------------------------------------------------------------ */
+.app-header .ui-menubar {
+    background: transparent;
+    border: none;
+}
+
+.app-header .ui-menubar .ui-menubar-root-list > .ui-menuitem > .ui-menuitem-link {
+    border-radius: 6px;
+}
+
+.app-header .ui-menubar .ui-menubar-root-list > .ui-menuitem > .ui-menuitem-link .ui-menuitem-text,
+.app-header .ui-menubar .ui-menubar-root-list > .ui-menuitem > .ui-menuitem-link .ui-menuitem-icon,
+.app-header .ui-menubar .ui-menubar-root-list > .ui-menuitem > .ui-menuitem-link .ui-submenu-icon {
+    color: #ffffff !important;
+}
+
+.app-header .ui-menubar .ui-menubar-root-list > .ui-menuitem:not(.ui-state-disabled):hover > .ui-menuitem-link,
+.app-header .ui-menubar .ui-menubar-root-list > .ui-menuitem.ui-menuitem-active > .ui-menuitem-link {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* ------------------------------------------------------------------ */
+/* Кнопки, поля и другие компоненты PrimeFaces: основной цвет — зелёный */
+/* ------------------------------------------------------------------ */
+.ui-button {
+    background: var(--app-accent);
+    border-color: var(--app-accent);
+}
+
+.ui-button:enabled:hover {
+    background: var(--app-accent-dark);
+    border-color: var(--app-accent-dark);
+}
+
+.ui-button:enabled:active {
+    background: var(--app-accent-dark);
+    border-color: var(--app-accent-dark);
+}
+
+.ui-button:focus {
+    box-shadow: 0 0 0 0.2rem rgba(73, 165, 45, 0.35);
+}
+
+.ui-button.ui-button-flat,
+.ui-button.ui-button-outlined {
+    color: var(--app-accent);
+}
+
+.ui-button.ui-button-flat:enabled:hover,
+.ui-button.ui-button-outlined:enabled:hover {
+    background: rgba(73, 165, 45, 0.1);
+    color: var(--app-accent-dark);
+}
+
+.ui-inputfield:enabled:focus,
+.ui-inputfield.ui-state-focus,
+.ui-selectonemenu.ui-state-focus {
+    border-color: var(--app-accent);
+    box-shadow: 0 0 0 0.2rem rgba(73, 165, 45, 0.25);
+}
+
+.app-content a:not(.ui-button),
+.form-container a:not(.ui-button) {
+    color: var(--app-accent-dark);
+}
+
+.ui-selectonemenu-panel .ui-selectonemenu-item.ui-state-highlight,
+.ui-selectonemenu-panel .ui-selectonemenu-item:not(.ui-state-highlight):not(.ui-state-disabled):hover {
+    background: var(--app-accent-soft);
+    color: var(--app-text);
+}
+
+.ui-paginator .ui-paginator-pages .ui-paginator-page.ui-state-active {
+    background: var(--app-accent-soft);
+    border-color: var(--app-accent-soft);
+    color: var(--app-accent-dark);
+}
+
+/* ------------------------------------------------------------------ */
+/* Таблицы: границы между столбцами и выравнивание значений            */
+/* ------------------------------------------------------------------ */
+.ui-datatable .ui-datatable-tablewrapper > table {
+    border-collapse: collapse;
+}
+
+.ui-datatable .ui-datatable-tablewrapper > table > thead > tr > th,
+.ui-datatable .ui-datatable-tablewrapper > table > tbody > tr > td,
+.ui-datatable .ui-datatable-tablewrapper > table > tfoot > tr > td {
+    border: 1px solid #d3dacd;
+}
+
+.ui-datatable .ui-datatable-tablewrapper > table > thead > tr > th {
+    background: #eef3ea;
+    color: var(--app-text);
+}
+
+.ui-datatable .ui-datatable-tablewrapper > table > thead > tr > th.ui-state-active {
+    background: #dcecd5;
+    color: #2f6b1c;
+}
+
+.ui-datatable .ui-datatable-tablewrapper > table > thead > tr > th.ui-state-active .ui-sortable-column-icon {
+    color: #2f6b1c;
+}
+
+/* текст — по левому краю, числа и идентификаторы — по правому (в шапке тоже) */
+.ui-datatable .ui-datatable-tablewrapper > table > thead > tr > th,
+.ui-datatable .ui-datatable-tablewrapper > table > tbody > tr > td {
+    text-align: left;
+}
+
+.ui-datatable .ui-datatable-tablewrapper > table > thead > tr > th.col-number,
+.ui-datatable .ui-datatable-tablewrapper > table > thead > tr > th.col-id,
+.ui-datatable .ui-datatable-tablewrapper > table > tbody > tr > td.col-number,
+.ui-datatable .ui-datatable-tablewrapper > table > tbody > tr > td.col-id {
+    text-align: left;
+}
+
+.ui-datatable .ui-datatable-tablewrapper > table > thead > tr > th.col-actions {
+    text-align: center;
+}
+
+/* ------------------------------------------------------------------ */
+/* Страницы входа и регистрации                                         */
+/* ------------------------------------------------------------------ */
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+.login-card {
+    width: 100%;
+    max-width: 450px;
+    overflow: hidden;
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.login-card .header {
+    padding: 30px;
+    background: var(--app-gradient);
+    color: #ffffff;
+    text-align: center;
+}
+
+.login-card .header h1 {
+    margin: 0 0 8px;
+    font-size: 24px;
+}
+
+.login-card .header p {
+    margin: 0;
+    font-size: 16px;
+    opacity: 0.9;
+}
+
+.form-container {
+    padding: 40px 30px;
+}
+
+.form-container h2 {
+    margin: 0 0 25px;
+    color: #333333;
+    text-align: center;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    color: #555555;
+    font-weight: 500;
+}
+
+.form-group .ui-inputfield {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e0e0e0;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+.form-group .ui-message {
+    margin: 0;
+}
+
+.form-container .ui-button.btn-primary {
+    justify-content: center;
+    width: 100%;
+    padding: 14px;
+    background: var(--app-gradient);
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    font-weight: 600;
+    transition: transform 0.2s;
+}
+
+.form-container .ui-button.btn-primary:enabled:hover {
+    background: var(--app-gradient);
+    transform: translateY(-2px);
+}
+
+.form-container a.btn-link {
+    display: block;
+    margin-top: 15px;
+    padding: 10px;
+    text-align: center;
+    font-size: 14px;
+    color: var(--app-accent-dark);
+    text-decoration: none;
+}
+
+.form-container a.btn-link:hover {
+    text-decoration: underline;
+}

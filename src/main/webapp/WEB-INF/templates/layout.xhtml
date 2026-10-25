@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:ui="jakarta.faces.facelets"
+      xmlns:p="primefaces"
+      lang="ru">
+<f:view locale="ru" contentType="text/html" encoding="UTF-8">
+    <ui:insert name="metadata"/>
+    <h:head>
+        <f:facet name="first">
+            <meta charset="UTF-8"/>
+            <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        </f:facet>
+        <title><ui:insert name="title"/> · ИС «Фильмы»</title>
+        <h:outputStylesheet name="css/app.css"/>
+        <h:outputScript name="js/app.js"/>
+    </h:head>
+    <h:body styleClass="app">
+        <div class="main-container">
+        <div class="main-card">
+        <header class="app-header">
+            <h:link outcome="/index" styleClass="app-brand">
+                <i class="pi pi-video"/> ИС «Фильмы»
+            </h:link>
+            <h:form id="menuForm" styleClass="app-menu">
+                <p:menubar>
+                    <p:menuitem value="Фильмы" outcome="/index" icon="pi pi-table"/>
+                    <p:menuitem value="Создать фильм" icon="pi pi-plus"
+                                action="#{movieForm.prepareCreate}" process="@this"
+                                update=":movieFormDialogForm"
+                                oncomplete="if (args &amp;&amp; args.ready) PF('movieFormDialog').show()"/>
+                    <p:menuitem value="Фильм по ID" outcome="/movie" icon="pi pi-search"/>
+                    <p:submenu label="Связанные объекты" icon="pi pi-sitemap">
+                        <p:menuitem value="Люди" outcome="/persons" icon="pi pi-users"/>
+                        <p:menuitem value="Места" outcome="/locations" icon="pi pi-map"/>
+                        <p:menuitem value="Координаты" outcome="/coordinates" icon="pi pi-map-marker"/>
+                    </p:submenu>
+                    <p:menuitem value="Специальные операции" outcome="/special" icon="pi pi-bolt"/>
+                </p:menubar>
+            </h:form>
+            <h:form id="logoutForm" styleClass="app-user">
+                <span class="app-user-name" title="Текущий пользователь"><i class="pi pi-user"/> #{auth.currentUser}</span>
+                <p:commandButton value="Выйти" icon="pi pi-sign-out" action="#{auth.logout}"
+                                 ajax="false" styleClass="btn-logout"/>
+            </h:form>
+        </header>
+
+        <p:growl id="growl" globalOnly="true" life="7000" showDetail="false">
+            <p:autoUpdate/>
+        </p:growl>
+
+        <main class="app-content">
+            <ui:insert name="content"/>
+        </main>
+        </div>
+        </div>
+
+        <!-- Окна создания, изменения и удаления фильма доступны с любой страницы -->
+        <ui:include src="/WEB-INF/includes/movie-dialogs.xhtml"/>
+
+        <p:confirmDialog global="true" responsive="true" width="440">
+            <p:commandButton value="Отмена" type="button" icon="pi pi-times"
+                             styleClass="ui-confirmdialog-no ui-button-secondary ui-button-outlined"/>
+            <p:commandButton value="Да, выполнить" type="button" icon="pi pi-check"
+                             styleClass="ui-confirmdialog-yes ui-button-danger"/>
+        </p:confirmDialog>
+
+        <p:ajaxExceptionHandler type="jakarta.faces.application.ViewExpiredException"
+                                update="viewExpiredDialog" onexception="PF('viewExpiredDialog').show()"/>
+        <p:ajaxExceptionHandler update="errorDialog" onexception="PF('errorDialog').show()"/>
+        <p:dialog fitViewport="true" id="viewExpiredDialog" widgetVar="viewExpiredDialog" header="Страница устарела"
+                  modal="true" closable="false" resizable="false" width="420">
+            <p>Сессия истекла или сервер был перезапущен. Обновите страницу, чтобы продолжить.</p>
+            <p:button value="Обновить страницу" icon="pi pi-refresh" onclick="location.reload(); return false;"/>
+        </p:dialog>
+        <p:dialog fitViewport="true" id="errorDialog" widgetVar="errorDialog" header="Непредвиденная ошибка"
+                  modal="true" resizable="false" width="520">
+            <p>#{pfExceptionHandler.message}</p>
+            <p class="hint">Подробности записаны в журнал сервера.</p>
+        </p:dialog>
+
+        <!-- Уведомления об изменениях данных от сервера (см. ChangeBroadcaster) -->
+        <f:websocket channel="changes" scope="application" onmessage="lab1.onDataChanged"/>
+    </h:body>
+</f:view>
+</html>

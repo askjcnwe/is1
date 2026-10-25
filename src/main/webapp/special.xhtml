@@ -1,0 +1,136 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="title">Специальные операции</ui:define>
+
+    <ui:define name="content">
+        <div class="page-header">
+            <div>
+                <h1>Специальные операции</h1>
+                <p>Каждая операция выполняется функцией базы данных, которую вызывает уровень бизнес-логики.</p>
+            </div>
+        </div>
+
+        <div class="ops-grid">
+            <h:form id="minUsaForm" styleClass="card op">
+                <h3>1. Фильм с минимальными сборами в США</h3>
+                <p class="hint">Возвращает один (любой) фильм с минимальным usaBoxOffice.
+                    Функция БД <code>get_movie_with_min_usa_box_office</code>.</p>
+                <p:commandButton id="findMin" value="Найти" icon="pi pi-search"
+                                 action="#{specialOperations.findMinUsaBoxOffice}" process="@form" update="@form"/>
+                <h:panelGroup layout="block" styleClass="result" rendered="#{not empty specialOperations.minMovie}">
+                    <h:link outcome="/movie" value="ID #{specialOperations.minMovie.id} — «#{specialOperations.minMovie.name}»">
+                        <f:param name="id" value="#{specialOperations.minMovie.id}"/>
+                    </h:link>,
+                    usaBoxOffice = <b><h:outputText value="#{specialOperations.minMovie.usaBoxOffice}" converter="positiveFloat"/></b>
+                </h:panelGroup>
+                <h:panelGroup layout="block" styleClass="result"
+                              rendered="#{specialOperations.minSearched and empty specialOperations.minMovie}">
+                    Фильмов пока нет.
+                </h:panelGroup>
+            </h:form>
+
+            <h:form id="countUsaForm" styleClass="card op">
+                <h3>2. Количество фильмов со сборами в США больше заданных</h3>
+                <p class="hint">Функция БД <code>count_movies_with_usa_box_office_greater</code>.</p>
+                <div class="inline-form">
+                    <p:outputLabel for="threshold" value="usaBoxOffice больше"/>
+                    <p:inputText id="threshold" value="#{specialOperations.usaThreshold}" converter="positiveFloat"
+                                 required="true" requiredMessage="Введите число"
+                                 converterMessage="Введите число, например 100000.5" maxlength="20"/>
+                    <p:keyFilter for="threshold" regEx="/[\d.,]/"/>
+                    <p:commandButton id="count" value="Посчитать" icon="pi pi-calculator"
+                                     action="#{specialOperations.countUsaBoxOfficeGreater}" process="@form" update="@form"/>
+                    <p:message for="threshold" display="text"/>
+                </div>
+                <p:defaultCommand target="count"/>
+                <h:panelGroup layout="block" styleClass="result" rendered="#{not empty specialOperations.usaCount}">
+                    Количество фильмов: <b>#{specialOperations.usaCount}</b>
+                </h:panelGroup>
+            </h:form>
+
+            <h:form id="taglineForm" styleClass="card op wide">
+                <h3>3. Фильмы, слоган которых содержит подстроку</h3>
+                <p class="hint">Поиск подстроки в tagline с учётом регистра; фильмы без слогана в результат не попадают.
+                    Функция БД <code>find_movies_by_tagline_substring</code>.</p>
+                <div class="inline-form">
+                    <p:outputLabel for="substring" value="Подстрока"/>
+                    <p:inputText id="substring" value="#{specialOperations.taglineSubstring}" required="true"
+                                 requiredMessage="Введите подстроку" maxlength="205"/>
+                    <p:commandButton id="findTagline" value="Найти" icon="pi pi-search"
+                                     action="#{specialOperations.findByTagline}" process="@form" update="@form"/>
+                    <p:message for="substring" display="text"/>
+                </div>
+                <p:defaultCommand target="findTagline"/>
+                <p:dataTable value="#{specialOperations.taglineResults}" var="m"
+                             rendered="#{specialOperations.taglineResults ne null}"
+                             emptyMessage="Таких фильмов нет" paginator="true" rows="10" paginatorPosition="bottom"
+                             paginatorAlwaysVisible="false" stripedRows="true" size="small" styleClass="results-table">
+                    <p:column headerText="ID" styleClass="col-id">
+                        <h:link outcome="/movie" value="#{m.id}"><f:param name="id" value="#{m.id}"/></h:link>
+                    </p:column>
+                    <p:column headerText="Название">#{m.name}</p:column>
+                    <p:column headerText="Слоган">#{m.tagline}</p:column>
+                    <p:column headerText="Жанр">#{empty m.genre ? 'null' : m.genre}</p:column>
+                    <p:column headerText="Режиссёр">#{empty m.director ? 'null' : m.director.name}</p:column>
+                    <p:column headerText="Сборы США" styleClass="col-number">
+                        <h:outputText value="#{m.usaBoxOffice}" converter="positiveFloat"/>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="screenwritersForm" styleClass="card op">
+                <h3>4. Сценаристы без «Оскаров»</h3>
+                <p class="hint">Сценаристы, ни один фильм которых не получил ни одного «Оскара».
+                    Функция БД <code>find_screenwriters_without_oscars</code>.</p>
+                <p:commandButton id="findScreenwriters" value="Найти" icon="pi pi-search"
+                                 action="#{specialOperations.findScreenwriters}" process="@form" update="@form"/>
+                <p:dataTable value="#{specialOperations.screenwriters}" var="p"
+                             rendered="#{specialOperations.screenwriters ne null}"
+                             emptyMessage="Таких сценаристов нет" stripedRows="true" size="small" styleClass="results-table">
+                    <p:column headerText="№" styleClass="col-id">#{p.id}</p:column>
+                    <p:column headerText="Имя">#{p.name}</p:column>
+                    <p:column headerText="Паспорт">#{p.passportID}</p:column>
+                </p:dataTable>
+            </h:form>
+
+            <h:form id="oscarsForm" styleClass="card op wide">
+                <h3>5. «Оскары» режиссёров жанра</h3>
+                <p class="hint">Находит все фильмы режиссёров, снявших хотя бы один фильм в выбранном жанре,
+                    и выводит их «Оскары». Функция БД <code>find_oscars_of_directors_by_genre</code>.</p>
+                <div class="field">
+                    <p:outputLabel for="genre" value="Жанр (genre)"/>
+                    <p:selectOneMenu id="genre" value="#{specialOperations.genre}" required="true"
+                                     requiredMessage="Выберите жанр">
+                        <f:selectItem itemLabel="— выберите жанр —" itemValue="#{null}" noSelectionOption="true"/>
+                        <f:selectItems value="#{enums.genres}"/>
+                    </p:selectOneMenu>
+                    <p:message for="genre" display="text"/>
+                </div>
+                <p:commandButton id="findOscars" value="Найти" icon="pi pi-search"
+                                 action="#{specialOperations.findOscars}" process="@form" update="@form"/>
+                <h:panelGroup layout="block" styleClass="result" rendered="#{specialOperations.oscarMovies ne null}">
+                    Фильмов: <b>#{specialOperations.oscarMovies.size()}</b>,
+                    «Оскаров» всего: <b>#{specialOperations.oscarsTotal}</b>
+                </h:panelGroup>
+                <p:dataTable value="#{specialOperations.oscarMovies}" var="m"
+                             rendered="#{specialOperations.oscarMovies ne null}"
+                             emptyMessage="Режиссёров, снявших фильм в этом жанре, нет"
+                             paginator="true" rows="10" paginatorPosition="bottom"
+                             paginatorAlwaysVisible="false" stripedRows="true" size="small" styleClass="results-table">
+                    <p:column headerText="ID" styleClass="col-id">
+                        <h:link outcome="/movie" value="#{m.id}"><f:param name="id" value="#{m.id}"/></h:link>
+                    </p:column>
+                    <p:column headerText="Название">#{m.name}</p:column>
+                    <p:column headerText="Режиссёр">#{m.director.name}</p:column>
+                    <p:column headerText="Жанр">#{empty m.genre ? 'null' : m.genre}</p:column>
+                    <p:column headerText="«Оскары»" styleClass="col-number">#{m.oscarsCount}</p:column>
+                </p:dataTable>
+            </h:form>
+        </div>
+    </ui:define>
+</ui:composition>

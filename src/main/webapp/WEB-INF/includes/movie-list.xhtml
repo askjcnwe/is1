@@ -1,0 +1,21 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets">
+    <!-- Другие фильмы, связанные с тем же объектом. Параметр: movies (список). -->
+    <h:panelGroup layout="block" styleClass="hint" rendered="#{empty movies}">
+        Другие фильмы с этим объектом не связаны.
+    </h:panelGroup>
+    <h:panelGroup layout="block" rendered="#{not empty movies}">
+        <div class="hint">Связан также с фильмами:</div>
+        <ul class="link-list">
+            <ui:repeat value="#{movies}" var="other">
+                <li>
+                    <h:link outcome="/movie" value="ID #{other.id} — #{other.name}">
+                        <f:param name="id" value="#{other.id}"/>
+                    </h:link>
+                </li>
+            </ui:repeat>
+        </ul>
+    </h:panelGroup>
+</ui:composition>

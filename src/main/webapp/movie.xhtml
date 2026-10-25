@@ -1,0 +1,137 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="/WEB-INF/templates/layout.xhtml">
+
+    <ui:define name="metadata">
+        <f:metadata>
+            <f:viewParam name="id" value="#{movieView.idParam}"/>
+            <f:viewAction action="#{movieView.load}"/>
+        </f:metadata>
+    </ui:define>
+
+    <ui:define name="title">Фильм по ID</ui:define>
+
+    <ui:define name="content">
+        <div class="page-header">
+            <div>
+                <h1>Информация о фильме</h1>
+                <p>Сведения о фильме по его ID и о связанных с ним объектах.</p>
+            </div>
+        </div>
+
+        <h:form id="searchForm" styleClass="card search-card">
+            <div class="inline-form">
+                <p:outputLabel for="searchId" value="ID фильма"/>
+                <p:inputText id="searchId" value="#{movieView.searchId}" required="true"
+                             requiredMessage="Введите ID фильма"
+                             converterMessage="ID — целое число больше 0" maxlength="19"/>
+                <p:keyFilter for="searchId" mask="pint"/>
+                <p:commandButton id="show" value="Показать" icon="pi pi-search"
+                                 action="#{movieView.search}" process="@form" update="@form"/>
+                <p:message for="searchId" display="text"/>
+            </div>
+            <p:defaultCommand target="show"/>
+        </h:form>
+
+        <h:form id="detailsForm">
+            <p:remoteCommand name="refreshData" ignoreAutoUpdate="true" action="#{movieView.reload}"
+                             process="@this" update="@form"/>
+
+            <h:panelGroup layout="block" styleClass="card notice" rendered="#{movieView.missing}">
+                <i class="pi pi-info-circle"/>
+                Фильм с ID #{movieView.id} не найден — возможно, он был удалён.
+            </h:panelGroup>
+
+            <h:panelGroup layout="block" rendered="#{not empty movieView.movie}">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>#{movieView.movie.name}
+                            <span class="muted">ID #{movieView.movie.id}</span></h2>
+                        <div class="card-actions">
+                            <p:commandButton value="Изменить" icon="pi pi-pencil"
+                                             action="#{movieForm.prepareEdit(movieView.movie.id)}"
+                                             process="@this" update=":movieFormDialogForm"
+                                             oncomplete="if (args &amp;&amp; args.ready) PF('movieFormDialog').show()"/>
+                            <p:commandButton value="Удалить" icon="pi pi-trash" styleClass="ui-button-danger ui-button-outlined"
+                                             action="#{movieDelete.prepare(movieView.movie.id)}"
+                                             process="@this" update=":movieDeleteDialogForm"
+                                             oncomplete="if (args &amp;&amp; args.ready) PF('movieDeleteDialog').show()"/>
+                        </div>
+                    </div>
+                    <dl class="props two-columns">
+                        <dt>id</dt>
+                        <dd>#{movieView.movie.id}</dd>
+                        <dt>name</dt>
+                        <dd>#{movieView.movie.name}</dd>
+                        <dt>coordinates</dt>
+                        <dd>X =&#160;<h:outputText value="#{movieView.movie.coordinates.x}" converter="decimal"/>,
+                            Y = #{movieView.movie.coordinates.y}</dd>
+                        <dt>creationDate</dt>
+                        <dd><h:outputText value="#{movieView.movie.creationDate}">
+                            <f:convertDateTime type="localDate" pattern="dd.MM.yyyy"/>
+                        </h:outputText></dd>
+                        <dt>oscarsCount</dt>
+                        <dd>#{movieView.movie.oscarsCount}</dd>
+                        <dt>budget</dt>
+                        <dd>#{movieView.movie.budget}</dd>
+                        <dt>totalBoxOffice</dt>
+                        <dd>#{movieView.movie.totalBoxOffice}</dd>
+                        <dt>mpaaRating</dt>
+                        <dd>#{movieView.movie.mpaaRating}</dd>
+                        <dt>director</dt>
+                        <dd>#{empty movieView.movie.director ? 'null' : movieView.movie.director.name}</dd>
+                        <dt>screenwriter</dt>
+                        <dd>#{empty movieView.movie.screenwriter ? 'null' : movieView.movie.screenwriter.name}</dd>
+                        <dt>operator</dt>
+                        <dd>#{movieView.movie.operator.name}</dd>
+                        <dt>length</dt>
+                        <dd>#{movieView.movie.length}</dd>
+                        <dt>goldenPalmCount</dt>
+                        <dd>#{movieView.movie.goldenPalmCount}</dd>
+                        <dt>usaBoxOffice</dt>
+                        <dd><h:outputText value="#{movieView.movie.usaBoxOffice}" converter="positiveFloat"/></dd>
+                        <dt>tagline</dt>
+                        <dd>#{empty movieView.movie.tagline ? 'null' : movieView.movie.tagline}</dd>
+                        <dt>genre</dt>
+                        <dd>#{empty movieView.movie.genre ? 'null' : movieView.movie.genre}</dd>
+                    </dl>
+                </div>
+
+                <h2 class="section-title">Связанные объекты</h2>
+                <div class="related-grid">
+                    <div class="card related">
+                        <h3><i class="pi pi-map-marker"/> Координаты №#{movieView.movie.coordinates.id}</h3>
+                        <dl class="props">
+                            <dt>x</dt>
+                            <dd><h:outputText value="#{movieView.movie.coordinates.x}" converter="decimal"/></dd>
+                            <dt>y</dt>
+                            <dd>#{movieView.movie.coordinates.y}</dd>
+                        </dl>
+                        <ui:include src="/WEB-INF/includes/movie-list.xhtml">
+                            <ui:param name="movies" value="#{movieView.details.sharingCoordinates}"/>
+                        </ui:include>
+                    </div>
+
+                    <ui:include src="/WEB-INF/includes/person-card.xhtml">
+                        <ui:param name="person" value="#{movieView.movie.director}"/>
+                        <ui:param name="role" value="Режиссёр"/>
+                        <ui:param name="relatedMovies" value="#{movieView.details.withDirector}"/>
+                    </ui:include>
+                    <ui:include src="/WEB-INF/includes/person-card.xhtml">
+                        <ui:param name="person" value="#{movieView.movie.screenwriter}"/>
+                        <ui:param name="role" value="Сценарист"/>
+                        <ui:param name="relatedMovies" value="#{movieView.details.withScreenwriter}"/>
+                    </ui:include>
+                    <ui:include src="/WEB-INF/includes/person-card.xhtml">
+                        <ui:param name="person" value="#{movieView.movie.operator}"/>
+                        <ui:param name="role" value="Оператор"/>
+                        <ui:param name="relatedMovies" value="#{movieView.details.withOperator}"/>
+                    </ui:include>
+                </div>
+            </h:panelGroup>
+        </h:form>
+    </ui:define>
+</ui:composition>

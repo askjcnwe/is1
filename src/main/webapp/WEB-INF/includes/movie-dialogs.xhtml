@@ -1,0 +1,220 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces">
+
+    <!-- Создание и изменение фильма -->
+    <p:dialog fitViewport="true" id="movieFormDialog" widgetVar="movieFormDialog" header="Фильм"
+              modal="true" resizable="false" responsive="true" width="820" closeOnEscape="true"
+              styleClass="form-dialog">
+        <h:form id="movieFormDialogForm">
+            <h:panelGroup layout="block" rendered="#{not empty movieForm.draft}">
+                <h2 class="dialog-title">#{movieForm.title}</h2>
+                <p class="hint">Поля со звёздочкой обязательны. id и дата создания задаются автоматически.</p>
+                <p:messages for="movieFormDialogForm" closable="true" styleClass="dialog-messages"/>
+
+                <div class="form-grid">
+                    <div class="field span-2">
+                        <p:outputLabel for="name" value="Название (name)"/>
+                        <p:inputText id="name" value="#{movieForm.draft.movie.name}" required="true"
+                                     requiredMessage="Введите название фильма" maxlength="255"/>
+                        <p:message for="name" display="text"/>
+                    </div>
+                    <div class="field span-2">
+                        <p:outputLabel for="tagline" value="Слоган (tagline)"/>
+                        <p:inputText id="tagline" value="#{movieForm.draft.movie.tagline}" maxlength="205"
+                                     placeholder="может быть пустым, не длиннее 205 символов"/>
+                        <p:message for="tagline" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="mpaaRating" value="Рейтинг MPAA (mpaaRating)"/>
+                        <p:selectOneMenu id="mpaaRating" value="#{movieForm.draft.movie.mpaaRating}" required="true"
+                                         requiredMessage="Выберите рейтинг MPAA">
+                            <f:selectItem itemLabel="— выберите —" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{enums.mpaaRatings}"/>
+                        </p:selectOneMenu>
+                        <p:message for="mpaaRating" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="genre" value="Жанр (genre)"/>
+                        <p:selectOneMenu id="genre" value="#{movieForm.draft.movie.genre}">
+                            <f:selectItem itemLabel="— не задан —" itemValue="#{null}" noSelectionOption="true"/>
+                            <f:selectItems value="#{enums.genres}"/>
+                        </p:selectOneMenu>
+                        <p:message for="genre" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="oscarsCount" value="«Оскары» (oscarsCount)"/>
+                        <p:inputText id="oscarsCount" value="#{movieForm.draft.movie.oscarsCount}"
+                                     required="true"
+                                     requiredMessage="Укажите число «Оскаров»"
+                                     converterMessage="Число «Оскаров» — целое число от 0 до 2147483647"
+                                     maxlength="10" placeholder="целое, 0 или больше"/>
+                        <p:keyFilter for="oscarsCount" mask="pint"/>
+                        <p:message for="oscarsCount" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="goldenPalmCount" value="«Золотые пальмовые ветви» (goldenPalmCount)"/>
+                        <p:inputText id="goldenPalmCount" value="#{movieForm.draft.movie.goldenPalmCount}"
+                                     converter="positiveInteger" required="true"
+                                     requiredMessage="Укажите число «Золотых пальмовых ветвей»"
+                                     converterMessage="Число ветвей — целое число от 1 до 2147483647"
+                                     maxlength="10" placeholder="целое, больше 0"/>
+                        <p:keyFilter for="goldenPalmCount" mask="pint"/>
+                        <p:message for="goldenPalmCount" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="length" value="Длительность (length)"/>
+                        <p:inputText id="length" value="#{movieForm.draft.movie.length}"
+                                     converter="positiveInteger" required="true"
+                                     requiredMessage="Укажите длительность"
+                                     converterMessage="Длительность — целое число от 1 до 2147483647"
+                                     maxlength="10" placeholder="целое, больше 0"/>
+                        <p:keyFilter for="length" mask="pint"/>
+                        <p:message for="length" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="budget" value="Бюджет (budget)"/>
+                        <p:inputText id="budget" value="#{movieForm.draft.movie.budget}"
+                                     converter="positiveLong" required="true" requiredMessage="Укажите бюджет"
+                                     converterMessage="Бюджет — целое число от 1 до 9223372036854775807"
+                                     maxlength="19" placeholder="целое, больше 0"/>
+                        <p:keyFilter for="budget" mask="pint"/>
+                        <p:message for="budget" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="totalBoxOffice" value="Общие сборы (totalBoxOffice)"/>
+                        <p:inputText id="totalBoxOffice" value="#{movieForm.draft.movie.totalBoxOffice}"
+                                     converter="positiveLong" required="true"
+                                     requiredMessage="Укажите общие сборы"
+                                     converterMessage="Общие сборы — целое число от 1 до 9223372036854775807"
+                                     maxlength="19" placeholder="целое, больше 0"/>
+                        <p:keyFilter for="totalBoxOffice" mask="pint"/>
+                        <p:message for="totalBoxOffice" display="text"/>
+                    </div>
+                    <div class="field">
+                        <p:outputLabel for="usaBoxOffice" value="Сборы в США (usaBoxOffice)"/>
+                        <p:inputText id="usaBoxOffice" value="#{movieForm.draft.movie.usaBoxOffice}"
+                                     converter="positiveFloat" required="true"
+                                     requiredMessage="Укажите сборы в США"
+                                     converterMessage="Сборы в США — число больше 0, например 125000.5"
+                                     maxlength="20" placeholder="больше 0, например 125000.5"/>
+                        <p:keyFilter for="usaBoxOffice" regEx="/[\d.,]/"/>
+                        <p:message for="usaBoxOffice" display="text"/>
+                    </div>
+                </div>
+
+                <fieldset class="relation">
+                    <legend>Координаты (coordinates) *</legend>
+                    <p:selectOneRadio id="coordinatesMode" value="#{movieForm.draft.coordinates.mode}"
+                                      layout="lineDirection">
+                        <f:selectItems value="#{movieForm.draft.coordinates.modes}" var="mode"
+                                       itemValue="#{mode}" itemLabel="#{mode.label}"/>
+                        <p:ajax process="@this" update="coordinatesBlock" ignoreAutoUpdate="true"/>
+                    </p:selectOneRadio>
+                    <h:panelGroup id="coordinatesBlock" layout="block" styleClass="relation-body">
+                        <h:panelGroup layout="block" styleClass="form-grid"
+                                      rendered="#{movieForm.draft.coordinates.mode ne 'EXISTING'}">
+                            <div class="field">
+                                <p:outputLabel for="x" value="X (число)"/>
+                                <p:inputText id="x" value="#{movieForm.draft.coordinates.x}"
+                                             converter="decimal" required="true"
+                                             requiredMessage="Укажите координату X"
+                                             converterMessage="X — число, например -12.5" maxlength="25"/>
+                                <p:keyFilter for="x" regEx="/[\d.,\-]/"/>
+                                <p:message for="x" display="text"/>
+                            </div>
+                            <div class="field">
+                                <p:outputLabel for="y" value="Y (целое число)"/>
+                                <p:inputText id="y" value="#{movieForm.draft.coordinates.y}" required="true"
+                                             requiredMessage="Укажите координату Y"
+                                             converterMessage="Y — целое число от -2147483648 до 2147483647"
+                                             maxlength="11"/>
+                                <p:keyFilter for="y" mask="int"/>
+                                <p:message for="y" display="text"/>
+                            </div>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" styleClass="field"
+                                      rendered="#{movieForm.draft.coordinates.mode eq 'EXISTING'}">
+                            <p:outputLabel for="existingCoordinates" value="Координаты, которые уже есть в системе"/>
+                            <p:selectOneMenu id="existingCoordinates" value="#{movieForm.draft.coordinates.existingId}"
+                                             required="true" requiredMessage="Выберите координаты"
+                                             filter="true" filterMatchMode="contains">
+                                <f:selectItem itemLabel="— выберите —" itemValue="#{null}" noSelectionOption="true"/>
+                                <f:selectItems value="#{movieForm.coordinatesOptions}" var="item"
+                                               itemValue="#{item.id}" itemLabel="№#{item.id}: X = #{item.x}, Y = #{item.y}"/>
+                            </p:selectOneMenu>
+                            <p:message for="existingCoordinates" display="text"/>
+                        </h:panelGroup>
+                        <h:panelGroup layout="block" styleClass="hint warning-hint"
+                                      rendered="#{movieForm.draft.coordinates.mode eq 'CURRENT' and movieForm.coordinatesSharedWith gt 0}">
+                            Эти координаты используются и другими фильмами (#{movieForm.coordinatesSharedWith}) —
+                            изменения отразятся и на них.
+                        </h:panelGroup>
+                    </h:panelGroup>
+                </fieldset>
+
+                <f:subview id="director">
+                    <ui:include src="/WEB-INF/includes/person-choice.xhtml">
+                        <ui:param name="personChoice" value="#{movieForm.draft.director}"/>
+                        <ui:param name="legend" value="Режиссёр (director)"/>
+                        <ui:param name="personOptions" value="#{movieForm.personOptions}"/>
+                        <ui:param name="locationList" value="#{movieForm.locationOptions}"/>
+                    </ui:include>
+                </f:subview>
+
+                <f:subview id="screenwriter">
+                    <ui:include src="/WEB-INF/includes/person-choice.xhtml">
+                        <ui:param name="personChoice" value="#{movieForm.draft.screenwriter}"/>
+                        <ui:param name="legend" value="Сценарист (screenwriter)"/>
+                        <ui:param name="personOptions" value="#{movieForm.personOptions}"/>
+                        <ui:param name="locationList" value="#{movieForm.locationOptions}"/>
+                    </ui:include>
+                </f:subview>
+
+                <f:subview id="operator">
+                    <ui:include src="/WEB-INF/includes/person-choice.xhtml">
+                        <ui:param name="personChoice" value="#{movieForm.draft.operator}"/>
+                        <ui:param name="legend" value="Оператор (operator) *"/>
+                        <ui:param name="personOptions" value="#{movieForm.personOptions}"/>
+                        <ui:param name="locationList" value="#{movieForm.locationOptions}"/>
+                    </ui:include>
+                </f:subview>
+
+                <div class="dialog-actions">
+                    <p:commandButton value="Отмена" type="button" icon="pi pi-times"
+                                     styleClass="ui-button-secondary ui-button-outlined"
+                                     onclick="PF('movieFormDialog').hide()"/>
+                    <p:commandButton id="save" value="Сохранить" icon="pi pi-check"
+                                     action="#{movieForm.save}" process="@form" update="@form"
+                                     oncomplete="if (args &amp;&amp; args.saved) { PF('movieFormDialog').hide(); lab1.refresh(); }"/>
+                </div>
+                <p:defaultCommand target="save"/>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+
+    <!-- Удаление фильма -->
+    <p:dialog fitViewport="true" id="movieDeleteDialog" widgetVar="movieDeleteDialog" header="Удаление фильма"
+              modal="true" resizable="false" responsive="true" width="560" closeOnEscape="true">
+        <h:form id="movieDeleteDialogForm">
+            <h:panelGroup layout="block" rendered="#{not empty movieDelete.target}">
+                <p>Удалить фильм <b>«#{movieDelete.target.name}»</b> (ID #{movieDelete.target.id})?</p>
+                <p class="hint">
+                    На фильм не ссылаются другие объекты, поэтому удаление возможно. Его координаты и люди
+                    (режиссёр, сценарист, оператор) останутся в системе.
+                </p>
+                <p:messages for="movieDeleteDialogForm" closable="true" styleClass="dialog-messages"/>
+                <div class="dialog-actions">
+                    <p:commandButton value="Отмена" type="button" icon="pi pi-times"
+                                     styleClass="ui-button-secondary ui-button-outlined"
+                                     onclick="PF('movieDeleteDialog').hide()"/>
+                    <p:commandButton id="confirmDelete" value="Удалить" icon="pi pi-trash" styleClass="ui-button-danger"
+                                     action="#{movieDelete.delete}" process="@form" update="@form"
+                                     oncomplete="if (args &amp;&amp; args.deleted) { PF('movieDeleteDialog').hide(); lab1.refresh(); }"/>
+                </div>
+            </h:panelGroup>
+        </h:form>
+    </p:dialog>
+</ui:composition>

@@ -1,0 +1,39 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces"
+                template="/WEB-INF/templates/auth.xhtml">
+
+    <ui:define name="title">Регистрация</ui:define>
+    <ui:define name="heading">Регистрация</ui:define>
+
+    <ui:define name="content">
+        <h:form id="registerForm">
+            <p:defaultCommand target="submit"/>
+            <div class="form-group">
+                <p:outputLabel for="username" value="Имя пользователя"/>
+                <p:inputText id="username" value="#{auth.username}" maxlength="50"
+                             required="true" requiredMessage="Введите имя пользователя"/>
+                <p:message for="username" display="text"/>
+                <div class="hint">От 3 до 50 символов: латинские буквы, цифры, знаки _ . -</div>
+            </div>
+            <div class="form-group">
+                <p:outputLabel for="password" value="Пароль"/>
+                <p:password id="password" value="#{auth.password}" maxlength="100"
+                            required="true" requiredMessage="Введите пароль"/>
+                <p:message for="password" display="text"/>
+                <div class="hint">От 6 до 100 символов</div>
+            </div>
+            <div class="form-group">
+                <p:outputLabel for="confirmation" value="Повторите пароль"/>
+                <p:password id="confirmation" value="#{auth.confirmation}" maxlength="100"
+                            required="true" requiredMessage="Повторите пароль"/>
+                <p:message for="confirmation" display="text"/>
+            </div>
+            <p:commandButton id="submit" value="Зарегистрироваться" icon="pi pi-user-plus"
+                             action="#{auth.register}" ajax="false" styleClass="btn-primary"/>
+        </h:form>
+        <h:link outcome="/login" value="Уже есть аккаунт? Войти" styleClass="btn-link"/>
+    </ui:define>
+</ui:composition>

@@ -1,0 +1,56 @@
+<ui:composition xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="jakarta.faces.html"
+                xmlns:f="jakarta.faces.core"
+                xmlns:ui="jakarta.faces.facelets"
+                xmlns:p="primefaces">
+    <!--
+        Выбор местоположения человека. Параметры: locationChoice (LocationChoice), locationOptions (список мест).
+        Подключается внутри f:subview, поэтому идентификаторы компонентов не пересекаются.
+    -->
+    <fieldset class="relation nested">
+        <legend>Местоположение (location)</legend>
+        <p:selectOneRadio id="locationMode" value="#{locationChoice.mode}" layout="lineDirection">
+            <f:selectItems value="#{locationChoice.modes}" var="mode" itemValue="#{mode}" itemLabel="#{mode.label}"/>
+            <p:ajax process="@this" update="locationBlock" ignoreAutoUpdate="true"/>
+        </p:selectOneRadio>
+        <h:panelGroup id="locationBlock" layout="block" styleClass="relation-body">
+            <h:panelGroup layout="block" styleClass="field" rendered="#{locationChoice.mode eq 'EXISTING'}">
+                <p:outputLabel for="existingLocation" value="Место, которое уже есть в системе"/>
+                <p:selectOneMenu id="existingLocation" value="#{locationChoice.existingId}" required="true"
+                                 requiredMessage="Выберите место" filter="true" filterMatchMode="contains">
+                    <f:selectItem itemLabel="— выберите —" itemValue="#{null}" noSelectionOption="true"/>
+                    <f:selectItems value="#{locationOptions}" var="item" itemValue="#{item.id}"
+                                   itemLabel="№#{item.id}: #{item}"/>
+                </p:selectOneMenu>
+                <p:message for="existingLocation" display="text"/>
+            </h:panelGroup>
+            <h:panelGroup layout="block" styleClass="form-grid three" rendered="#{locationChoice.mode eq 'NEW'}">
+                <div class="field">
+                    <p:outputLabel for="locationX" value="X (целое)"/>
+                    <p:inputText id="locationX" value="#{locationChoice.location.x}" required="true"
+                                 requiredMessage="Укажите X"
+                                 converterMessage="X — целое число от -2147483648 до 2147483647" maxlength="11"/>
+                    <p:keyFilter for="locationX" mask="int"/>
+                    <p:message for="locationX" display="text"/>
+                </div>
+                <div class="field">
+                    <p:outputLabel for="locationY" value="Y (целое)"/>
+                    <p:inputText id="locationY" value="#{locationChoice.location.y}" required="true"
+                                 requiredMessage="Укажите Y"
+                                 converterMessage="Y — целое число от -2147483648 до 2147483647" maxlength="11"/>
+                    <p:keyFilter for="locationY" mask="int"/>
+                    <p:message for="locationY" display="text"/>
+                </div>
+                <div class="field">
+                    <p:outputLabel for="locationName" value="Название (name)"/>
+                    <p:inputText id="locationName" value="#{locationChoice.location.name}" maxlength="255"
+                                 placeholder="может быть пустым"/>
+                    <p:message for="locationName" display="text"/>
+                </div>
+            </h:panelGroup>
+            <h:panelGroup layout="block" styleClass="hint" rendered="#{locationChoice.mode eq 'NONE'}">
+                Местоположение не будет указано (null).
+            </h:panelGroup>
+        </h:panelGroup>
+    </fieldset>
+</ui:composition>
